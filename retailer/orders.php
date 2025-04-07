@@ -39,7 +39,7 @@ $orders_result = mysqli_stmt_get_result($orders_stmt);
                 <a href="/" class="text-xl font-bold">Farmer's Portal</a>
                 <div class="space-x-4">
                     <a href="dashboard.php" class="hover:text-gray-200">Dashboard</a>
-                    <a href="/auth/logout.php" class="hover:text-gray-200">Logout</a>
+                    <a href="../auth/logout.php" class="hover:text-gray-200">Logout</a>
                 </div>
             </div>
         </div>
