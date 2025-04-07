@@ -19,8 +19,8 @@
                         echo '<a href="' . $dashboard . '" class="hover:text-gray-200">Dashboard</a>';
                         echo '<a href="/auth/logout.php" class="hover:text-gray-200">Logout</a>';
                     } else {
-                        echo '<a href="/auth/login.php" class="hover:text-gray-200">Login</a>';
-                        echo '<a href="/auth/register.php" class="hover:text-gray-200">Register</a>';
+                        echo '<a href="auth/login.php" class="hover:text-gray-200">Login</a>';
+                        echo '<a href="auth/register.php" class="hover:text-gray-200">Register</a>';
                     }
                     ?>
                 </div>
@@ -42,7 +42,7 @@
                     <li>• Receive bids from retailers</li>
                     <li>• Manage orders and inventory</li>
                 </ul>
-                <a href="/auth/register.php?type=farmer" class="mt-4 inline-block bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Register as Farmer</a>
+                <a href="auth/register.php?type=farmer" class="mt-4 inline-block bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Register as Farmer</a>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-md">
@@ -52,7 +52,7 @@
                     <li>• Place bids for bulk orders</li>
                     <li>• Direct communication with farmers</li>
                 </ul>
-                <a href="/auth/register.php?type=retailer" class="mt-4 inline-block bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Register as Retailer</a>
+                <a href="auth/register.php?type=retailer" class="mt-4 inline-block bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Register as Retailer</a>
             </div>
         </div>
     </main>
