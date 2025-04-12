@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/auth_middleware.php';
 require_once '../config/database.php';
+require_once '../includes/mailer.php';
 check_farmer_auth();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bid_id']) && isset($_POST['action'])) {
@@ -56,6 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bid_id']) && isset($_
 
                 // Commit transaction
                 mysqli_commit($conn);
+                sendBidStatusEmail(
+                    $details['email'],
+                    'accepted',
+                    $details['product_name'],
+                    $bid['quantity'],
+                    $bid['bid_amount']
+                );
+
                 header("Location: dashboard.php?success=bid_accepted");
                 exit();
             } catch (Exception $e) {
@@ -68,6 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bid_id']) && isset($_
             $stmt = mysqli_prepare($conn, $update_sql);
             mysqli_stmt_bind_param($stmt, "i", $bid_id);
             if (mysqli_stmt_execute($stmt)) {
+                sendBidStatusEmail(
+                    $details['email'],
+                    'rejected', 
+                    $details['product_name'],
+                    $bid['quantity'],
+                    $bid['bid_amount']
+                );
                 header("Location: dashboard.php?success=bid_rejected");
                 exit();
             }

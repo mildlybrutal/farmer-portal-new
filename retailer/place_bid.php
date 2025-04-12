@@ -38,6 +38,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
     }
+
+    if (mysqli_stmt_execute($stmt)) {
+    // Get farmer's email and product details
+        $get_details_sql = "SELECT u.email, u.username as farmer_name, p.name as product_name 
+                        FROM users u 
+                        JOIN products p ON p.farmer_id = u.id 
+                        WHERE u.id = ? AND p.id = ?";
+        $details_stmt = mysqli_prepare($conn, $get_details_sql);
+        mysqli_stmt_bind_param($details_stmt, "ii", $farmer_id, $product_id);
+        mysqli_stmt_execute($details_stmt);
+        $details_result = mysqli_stmt_get_result($details_stmt);
+        $details = mysqli_fetch_assoc($details_result);
+
+        // Send email notification to farmer
+        sendBidPlacedEmail(
+            $details['email'],
+            $_SESSION['username'],
+            $details['product_name'],
+            $quantity,
+            $bid_amount
+        );
+
+        header("Location: dashboard.php?success=bid_placed");
+        exit();
+    } else {
+        header("Location: dashboard.php?error=bid_failed");
+        exit();
+    }
 }
 
 header("Location: dashboard.php?error=invalid_product");

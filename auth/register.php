@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
+require_once '../includes/mailer.php';
 
 $error = '';
 $user_type = isset($_GET['type']) ? $_GET['type'] : 'farmer';
@@ -35,6 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = 'Registration failed. Please try again.';
         }
+    }
+
+    if (mysqli_stmt_execute($stmt)) {
+        sendRegistrationEmail($email, $username, $user_type);
+        header("Location: login.php");
+        exit();
     }
 }
 ?>
