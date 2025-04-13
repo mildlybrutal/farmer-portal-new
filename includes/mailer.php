@@ -3,7 +3,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require '../vendor/autoload.php';
+require '..\vendor\autoload.php';
 
 function createMailer() {
     $mail = new PHPMailer(true);
@@ -12,11 +12,11 @@ function createMailer() {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'akashsingu48@gmail.com';
-        $mail->Password   = 'gfjl tnnz jyme jnkq';
+        $mail->Username   = 'tanish183gupta@gmail.com';
+        $mail->Password   = 'kwbv fdci qeld arfq';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-        $mail->setFrom('akashsingu48@gmail.com', 'Farmers Portal');
+        $mail->setFrom('tanish183gupta@gmail.com', 'Farmers Portal');
 
         return $mail;
     } catch (Exception $e) {
