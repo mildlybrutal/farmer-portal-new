@@ -108,7 +108,7 @@ $bids_result = mysqli_stmt_get_result($bids_stmt);
     <nav class="glass-effect text-slate-800 shadow-sm fixed w-full top-0 z-50">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
-                <a href="/" class="text-xl font-display font-bold text-teal-600 hover:text-teal-700 transition-all">Farmer's Portal</a>
+                <a href="../index.php" class="text-xl font-display font-bold text-teal-600 hover:text-teal-700 transition-all">Farmer's Portal</a>
                 <div class="space-x-4">
                     <a href="orders.php" class="font-medium text-slate-600 hover:text-teal-600 transition-all">My Orders</a>
                     <span class="font-medium text-slate-600">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
@@ -165,7 +165,7 @@ $bids_result = mysqli_stmt_get_result($bids_stmt);
                 <?php while ($product = mysqli_fetch_assoc($products_result)): ?>
                     <div class="glass-effect rounded-xl overflow-hidden card-shadow">
                         <?php if (!empty($product['image_url'])): ?>
-                            <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-full h-48 object-cover">
+                            <img src="../<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-full h-48 object-cover">
                         <?php else: ?>
                             <div class="w-full h-48 bg-slate-100 flex items-center justify-center">
                                 <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
