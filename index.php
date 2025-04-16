@@ -150,13 +150,13 @@ session_start();
                 <h3 class="text-xl font-bold text-slate-800 mb-4">Fair Bidding System</h3>
                 <p class="text-slate-600">Transparent bidding process ensures fair prices for both farmers and retailers.</p>
             </div>
-            <div class="glass-effect rounded-2xl p-8 card-shadow opacity-0 animate-[fadeIn_1s_ease-in_1.5s_forwards]">
-                <div class="text-teal-600 mb-4">
+            <div class="glass-effect rounded-2xl p-8 card-shadow opacity-0 animate-[fadeIn_1s_ease-in_1.5s_forwards]"> 
+                 <div class="text-teal-600 mb-4">
                     <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
                     </svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 mb-4">Direct Communication</h3>
+                </div> 
+                 <h3 class="text-xl font-bold text-slate-800 mb-4">Direct Communication</h3>
                 <p class="text-slate-600">Connect directly with buyers and sellers to negotiate better deals.</p>
             </div>
         </section>
