@@ -3,29 +3,62 @@ session_start();
 require_once '../config/database.php';
 
 $error = '';
+$success = '';
+$showChangeForm = false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Step 1: User submits username and email to request password reset
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_reset'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = $_POST['password'];
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
 
-    $sql = "SELECT id, username, password, user_type FROM users WHERE username = ?";
+    $sql = "SELECT id FROM users WHERE username = ? AND email = ?";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_bind_param($stmt, "ss", $username, $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
     if ($user = mysqli_fetch_assoc($result)) {
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['user_type'] = $user['user_type'];
-            
-            header("Location: ../" . $user['user_type'] . "/dashboard.php");
-            exit();
-        }
+        $_SESSION['reset_user_id'] = $user['id'];
+        $_SESSION['reset_username'] = $username;
+        $showChangeForm = true;
+    } else {
+        $error = 'Username and email do not match.';
     }
-    $error = 'Invalid username or password';
 }
+
+// Step 2: User submits new password
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+    $password = $_POST['password'];
+    $password1 = $_POST['password1'];
+    if ($password !== $password1) {
+        $error = 'Passwords do not match.';
+        $showChangeForm = true;
+    } elseif (strlen($password) < 8) {
+        $error = 'Password must be at least 8 characters.';
+        $showChangeForm = true;
+    } elseif (isset($_SESSION['reset_user_id'])) {
+        $user_id = $_SESSION['reset_user_id'];
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $update_sql = "UPDATE users SET password = ? WHERE id = ?";
+        $update_stmt = mysqli_prepare($conn, $update_sql);
+        mysqli_stmt_bind_param($update_stmt, "si", $hashed_password, $user_id);
+        if (mysqli_stmt_execute($update_stmt)) {
+            $success = 'Password changed successfully!';
+            unset($_SESSION['reset_user_id']);
+            unset($_SESSION['reset_username']);
+        } else {
+            $error = 'Failed to update password.';
+            $showChangeForm = true;
+        }
+    } else {
+        $error = 'Session expired. Please try again.';
+    }
+}
+
+if (isset($_SESSION['reset_user_id'])) {
+    $showChangeForm = true;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -112,8 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="w-full max-w-md animate-fadeIn" style="animation-delay: 0.2s;">
             <div class="glass-effect rounded-2xl p-8 shadow-xl">
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-display font-bold text-slate-800 mb-2">Welcome Back</h1>
-                    <p class="text-slate-600">Sign in to continue to your dashboard</p>
+                    <h1 class="text-3xl font-display font-bold text-slate-800 mb-2">Forgot Password</h1>
+                    <p class="text-slate-600">Enter your username and email to reset your password.</p>
                 </div>
 
                 <?php if ($error): ?>
@@ -121,7 +154,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php echo htmlspecialchars($error); ?>
                     </div>
                 <?php endif; ?>
+                <?php if ($success): ?>
+                    <div class="bg-green-50 text-green-700 p-4 rounded-xl mb-6 text-center text-sm">
+                        <?php echo htmlspecialchars($success); ?>
+                        <div class="mt-2">
+                            <a href="login.php" class="text-teal-600 hover:text-teal-700 font-medium underline">Return to Login</a>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
+                <?php if (!$showChangeForm && !$success): ?>
                 <form method="POST" class="space-y-6">
                     <div>
                         <label for="username" class="block text-sm font-medium text-slate-700 mb-2">Username</label>
@@ -129,27 +171,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             class="form-input w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                             placeholder="Enter your username">
                     </div>
-
                     <div>
-                        <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
-                        <input type="password" id="password" name="password" required 
+                        <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                        <input type="email" id="email" name="email" required 
                             class="form-input w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                            placeholder="Enter your password">
+                            placeholder="Enter your email">
                     </div>
-                    <div>
-                        <a href="forgot.php"><label for="forgot_pass" class="text-sm">Forget Password?</label></a>
-                    </div>
-
-                    <button type="submit" 
+                    <button type="submit" name="request_reset"
                         class="w-full bg-teal-600 text-white py-3 px-4 rounded-xl hover:bg-teal-700 transition-all font-medium text-sm hover:-translate-y-0.5 transform focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
-                        Sign In
+                        Request Password Reset
                     </button>
-
                     <p class="text-center text-sm text-slate-600">
-                        Don't have an account? 
-                        <a href="register.php" class="text-teal-600 hover:text-teal-700 font-medium">Register here</a>
+                        Remembered your password? 
+                        <a href="login.php" class="text-teal-600 hover:text-teal-700 font-medium">Login here</a>
                     </p>
                 </form>
+                <?php endif; ?>
+
+                <?php if ($showChangeForm && !$success): ?>
+                <form method="POST" class="space-y-6">
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
+                        <input type="password" id="password" name="password" required 
+                            class="form-input w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                            placeholder="Enter new password">
+                    </div>
+                    <div>
+                        <label for="password1" class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
+                        <input type="password" id="password1" name="password1" required 
+                            class="form-input w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                            placeholder="Confirm new password">
+                    </div>
+                    <button type="submit" name="change_password"
+                        class="w-full bg-teal-600 text-white py-3 px-4 rounded-xl hover:bg-teal-700 transition-all font-medium text-sm hover:-translate-y-0.5 transform focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+                        Change Password
+                    </button>
+                </form>
+                <?php endif; ?>
             </div>
         </div>
     </main>
