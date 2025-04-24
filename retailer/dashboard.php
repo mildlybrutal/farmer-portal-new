@@ -103,6 +103,15 @@ $bids_result = mysqli_stmt_get_result($bids_stmt);
             backdrop-filter: blur(8px);
         }
     </style>
+<script>
+    // Show popup if insufficient quantity error is present in the URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('error') === 'insufficient_quantity') {
+            alert('Cannot place bid: Requested quantity is not available.');
+        }
+    });
+</script>
 </head>
 <body class="bg-gradient min-h-screen font-sans">
     <nav class="glass-effect text-slate-800 shadow-sm fixed w-full top-0 z-50">
